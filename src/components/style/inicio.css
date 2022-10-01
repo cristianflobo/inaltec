@@ -1,0 +1,26 @@
+.izquierda{
+    flex: 1;
+    width: 50%;
+    height: 100vh;
+    background-color: #283039;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.lista{
+    color: white;
+    width: 70%;
+    height: 50%;
+    background-color: #323c46 ;
+    display: flex;
+    border-radius: 25px;
+    flex-direction: column;
+}
+.botonmas{
+    width: 25px;
+    height: 25px;
+    
+    border-bottom: 1px solid;
+}
