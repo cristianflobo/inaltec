@@ -7,6 +7,8 @@ const Inicio = () => {
   const [componetDerecha, setcomponetDerecha] = useState("+")
   const [dataState, setdataState] = useState("")
   const [exitosa, setexitosa] = useState("")
+  const [dobleClick, setdobleClick] = useState({data:"", edit:false})
+
   useEffect(() => {
     dataAxios()
   }, [exitosa])
@@ -21,14 +23,29 @@ const Inicio = () => {
     
   }
 
-  const eliminar = (e) => {
-    e.preventDefault();
-    console.log(e.target.value)
+  const eliminar = async (id) => {
+   const deleteData = dataState.find(item => item.id == id)
+    try {
+      const data = await axios.post("http://dev.inaltec.com.co:60000/Aeronaves/Retirar", {id:deleteData.id, descripcion: deleteData.descripcion, fechaRegistro:deleteData.fechaRegistro})
+      console.log(data.data.operacionExitosa)
+      if (data.data.operacionExitosa) {
+        dataAxios()
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    
+    console.log(id)
   }
 
-  const dobleclic = (e) => {
-    console.log(e)
-
+  const dobleclic = (id) => {
+    const updateData = dataState.find(item => item.id == id)
+    setdobleClick({
+      ...dobleClick,
+      data:updateData,
+      edit:true
+    })
+  
   }
   
 
@@ -50,24 +67,24 @@ const Inicio = () => {
             </div>
           </div>
           <div style={{display:"flex", flexDirection:"row", marginTop:20}}>
-            <a style={{width:"30%", display:'flex', justifyContent:"center"}}> id </a>
+            <a  style={{width:"35%", display:'flex', justifyContent:"center"}}> id </a>
             <a style={{width:"50%", display:'flex', justifyContent:"center"}}>descripcion </a>
             <a style={{width:"70%", display:'flex', justifyContent:"center"}}>Fecha de registro </a>
           </div>  
           <div>
             <div>
-          <button value="1"  onClick={(e) => eliminar(e)} style={{width:15, height:15}} >-</button>
+        
           </div>
             {
               dataState && dataState .map((item)=>{
                 return (
-                  <div id={item.id} key = {item.id} style={{display:"flex", flexDirection:"row", marginTop:5}} onDoubleClick={(e)=>dobleclic(e)} >
-                    <div style={{ marginRight:-15}}>
-                      <button key={item.id} value={item.id}  onChange={(e) => eliminar(e)} style={{width:15, height:15}} >-</button>
+                  <div id={item.id}   style={{display:"flex", flexDirection:"row", marginTop:5}} onDoubleClick={()=>dobleclic(item.id)} >
+                    <div style={{ marginRight:-15, width:"10%"}}>
+                      <button key={item.id} value={item.id}  onClick={() => eliminar(item.id)} style={{width:30, height:20, fontSize:12}} >-</button>
                     </div>
-                    <a style={{width:"30%", display:'flex', justifyContent:"center"}}> {item.id} </a>
-                    <a style={{width:"50%", display:'flex', justifyContent:"center"}}>{item.descripcion} </a>
-                    <a style={{width:"70%", display:'flex', justifyContent:"center"}}>{item.fechaRegistro} </a>
+                    <a value={item.id} style={{width:"20%", display:'flex', justifyContent:"center"}}> {item.id} </a>
+                    <a value={item.id} style={{width:"50%", display:'flex', justifyContent:"center"}}>{item.descripcion} </a>
+                    <a value={item.id} style={{width:"70%", display:'flex', justifyContent:"center"}}>{item.fechaRegistro} </a>
                   </div>
                 )
               })
@@ -77,8 +94,8 @@ const Inicio = () => {
         
       </div>
       <div style={{width:"50%"}}>
-       {
-            componetDerecha === "+" ? null :<Derecha exitosa = {setexitosa}/>
+        {
+            componetDerecha === "+" ? null :<Derecha exitosa = {setexitosa} dataInfo = {dobleClick} setdataInfo={setdobleClick} />
         }
         </div>
     </div>
